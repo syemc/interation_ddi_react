@@ -192,14 +192,7 @@ const App = () => {
       filteredStates: [],
       close: false,
     },
-    {
-      text: 'Введите лекарство',
-      value: '',
-      id: 1,
-      modal: false,
-      filteredStates: [],
-      close: false,
-    },
+    
   ])
   const handleText = id => e => {
     let input = [...inputs]
@@ -243,7 +236,7 @@ const App = () => {
     })
     console.log(getParams)
     axios
-      .get(`https://pocketmedic.online/compare/drugs_mnn?` + getParams)
+      .get(`http://127.0.0.1:8000/compare/effect_traffic_light?` + getParams)
       .then(response => {
         const compares = response.data
         compares.map((compare) => {
@@ -275,12 +268,12 @@ const App = () => {
       color: 'yellow'
     },
   ]
-  const searchAutoComplite = (inputs) => {
-    console.log(inputs)
+  const searchAutoComplite = (input) => {
+    console.log(input)
     axios
-      .get(`https://pocketmedic.online/compare/drugs_search?drug=` + inputs)
+      .get(`http://127.0.0.1:8000/compare/drugs_search?drug=` + input)
       .then(response => {
-        const compares = response.data.mnn_1
+        const compares = response.data.name
         setAutoComplite(Object.values(compares))
       }).catch(error => console.log('autoComplite error', error))
   }
@@ -314,26 +307,28 @@ const App = () => {
                 ))}
               </Box>
               <Box className={classes.activePart__ButtonBox}>
-                <Button variant="contained" className={classes.activePart__Button} onClick={() => { addInput() }}>Добавить лекастрва</Button>
-                <Button variant="contained" className={classes.activePart__Button} onClick={() => { compareInteractions() }}>Посмотреть совместимости</Button>
+                
+                <Button variant="contained" className={classes.activePart__Button} onClick={() => { compareInteractions() }}>Посмотреть эффект</Button>
               </Box>
             </Grid>
             <Grid item lg={6} sm={12} md={6} xl={6} xs={12} className={classes.TextAreaBox}>
               <Box style={{ display: 'flex', flexDirection: 'row', marginBottom: 10 }}>
-                {/* <Typography variant="body2">Взаимодействие:</Typography> */}
+			  
+                <Typography variant="body2">Эффекты падений:</Typography> 
+				
               </Box>
               <Box className={classes.interactionsContent}>
                 {/* <Box>{effect !== 'нету эффектов' ? mnn1 + ' и ' + mnn2 + ' взаимодействуют: ' : ''} {effect !== 'нету эффектов' ? colorBox() : ''}{effect}</Box> */}
 
                 {effect ? effect.map((item, index) => (
                   <div key={index}>
-                    <span style={{ fontWeight: 'bold' }}>{item.drug_1}</span> и <span style={{ fontWeight: 'bold' }}>{item.drug_2}</span> взаимодействуют: <span style={{ backgroundColor: `${item.effect !== 'not effect' ? Object.values(item.color) : 'grey'}`, width: 15, height: 20, margin: 5, border: '1px solid black', color: `${item.effect !== 'not effect' ? Object.values(item.color) : 'grey'}` }}>az</span> {Object.values(item.effect)}
+                    <span style={{ fontWeight: 'bold' }}>{item.group}</span> : <span style={{ fontWeight: 'fixed' }}>{item.drug}</span> <span style={{ fontWeight: 'bold' }}>{item.drug_1}</span> <span style={{ fontWeight: 'bold' }}>{item.drug_2}</span>	<span style={{ backgroundColor: `${item.effect !== 'not effect' ? Object.values(item.color) : 'grey'}`, width: 15, height: 20, margin: 5, border: '1px solid black', color: `${item.effect !== 'not effect' ? Object.values(item.color) : 'grey'}` }}>___</span> {Object.values(item.effect)}
                   </div>
                 )) : 'нету эффектов'}
               </Box>
               <Box className={classes.InfoBlock}>
                 {/* <Typography variant="body1">Классификация взаимодействия с лекарствами</Typography> */}
-                <Typography variant="body2">степень риска возникновения падения при применении лекарственного средства:</Typography>
+                <Typography variant="body2">Степень риска возникновения падения при применении лекарственного средства:</Typography>
                 <Box className={classes.InfoBlock_Content}>
                   {arrayInfoDrug.map((item, index) => (
                     <Box className={classes.InfoBlock_Item} key={index}>
