@@ -91,7 +91,7 @@ const useClasses = makeStyles(theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     height: 48,
-    backgroundColor: '#28d5a3',
+    backgroundColor: '#7B68EE',
     color: 'white',
     marginLeft: 5,
     '&:focus': {
@@ -314,7 +314,7 @@ const App = () => {
             <Grid item lg={6} sm={12} md={6} xl={6} xs={12} className={classes.TextAreaBox}>
               <Box style={{ display: 'flex', flexDirection: 'row', marginBottom: 10 }}>
 			  
-                <Typography variant="body2">Эффекты падений:</Typography> 
+                <Typography variant="body2"><span style={{ fontWeight: 'bold' }}>Эффекты падений:</span> </Typography> 
 				
               </Box>
               <Box className={classes.interactionsContent}>
