@@ -1,12 +1,12 @@
-import React, { useReducer, useState, useEffect } from 'react';
-import { Box, TextField, Typography, Container, Grid, Button, TextareaAutosize, colors } from "@material-ui/core";
+import React, { useState } from 'react';
+import { Box, TextField, Typography, Container, Grid, Button } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from "react-router-dom";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import axios from 'axios'
 
-import SimpleModal from './component/SimpleModal'
 import ButtonCustom from './component/ButtonCustom'
+import SimpleModal from './component/SimpleModal'
 
 const useClasses = makeStyles(theme => ({
   content: {
@@ -111,8 +111,7 @@ const useClasses = makeStyles(theme => ({
   interactionBox: {
     display: 'flex',
     justifyContent: 'start',
-    alignItems: 'start',
-    marginTop: 20
+    alignItems: 'start'
   },
   TextAreaBox: {
     [theme.breakpoints.down('sm')]: {
@@ -128,7 +127,7 @@ const useClasses = makeStyles(theme => ({
     width: '100%',
     height: 300,
     border: '1px solid black',
-    padding: 5,
+    paddingTop: 10,
     flexDirection: 'column',
     overflow: 'auto',
 
@@ -137,20 +136,20 @@ const useClasses = makeStyles(theme => ({
     padding: 20,
     borderRadius: 10,
     backgroundColor: '#f0f0f0',
-    width: '94%',
-    height: '100%',
+    width: '100%',
+    minHeight: 300,
     marginTop: 10
   },
   InfoBlock_Content: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'start',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   InfoBlock_Item: {
     display: 'flex',
     flexDirection: 'row',
-    marginTop: 10,
+    marginTop: 5,
     borderTop: '1px solid #b9b9b9',
     width: '100%',
     [theme.breakpoints.down('xs')]: {
@@ -170,18 +169,17 @@ const useClasses = makeStyles(theme => ({
   }
 }))
 
-const App = () => {
+const Interactions = () => {
   let history = useHistory();
   const classes = useClasses()
 
   let [idCounter, setIdCounter] = useState(1)
   const [effect, setEffect] = useState([])
-  const [mnn1, setMnn1] = useState('')
-  const [mnn2, setMnn2] = useState('')
-  const [color, setColor] = useState()
   const [showModal, setShowModal] = useState(false)
   const [AutoCompliteList, setAutoComplite] = useState([])
-  const spanCustom = document.createElement('span')
+
+  const urlGlobal = 'https://pocketmedic.online/'
+  const urlLocal = 'http://127.0.0.1:8000/'
 
   const [inputs, setInputs] = useState([
     {
@@ -243,58 +241,65 @@ const App = () => {
     })
     console.log(getParams)
     axios
-      .get(`https://pocketmedic.online/compare/drugs_mnn?` + getParams)
+      .get(`${urlLocal}compare/drugs_mnn?` + getParams)
       .then(response => {
         const compares = response.data
-        compares.map((compare) => {
-          if (compare.effect !== 'not effect') {
-            console.log(response.data)
-            setEffect(response.data)
-          } else {
-            setShowModal(true)
-          }
+        let status = compares.some((item) => {
+          return item.effect !== 'not effect'
         })
+        if (status) {
+          setEffect(response.data)
+        } else {
+          setShowModal(true)
+        }
       }).catch((error) => {
         console.log('error', error)
       })
   }
   const arrayInfoDrug = [
     {
-      label: 'Высокий риск',
-      value: 'Падения часты, при применении лекарственного средства или в комбинации с другими препаратами',
+      label: 'Опасные',
+      value: 'Потенциально опасные межлекарственные взаимодействия: риск от совместного применения ЛС превышает пользу для пациента, поэтому следует в большинстве случаев избегать подобных комбинаций ЛС или применять ЛС в минимальных дозах.',
       color: 'red'
     },
     {
-      label: 'Умеренный риск',
-      value: 'Вызывает падения, особенно при применении в комбинации с другими лекарственными средствами)',
-      color: 'orange'
+      label: 'Значимые ',
+      value: 'Потенциальные межлекарственные взаимодействия средней степени значимости: такие комбинации часто требуют более тщательного клинического, лабораторного и инструментального контроля за эффективностью и безопасностью',
+      color: 'yellow'
     },
     {
       label: 'Малозначимые ',
-      value: 'Возможное возникновение падений, в частности при применении в комбинации',
-      color: 'yellow'
+      value: 'Взаимодействия с минимальным клиническим значением. К этому уровню относятся взаимодействия, характеризующиеся минимальным риском развития неблагоприятных побочных реакций или неэффективности лечения.',
+      color: 'green'
+    },
+    {
+      label: 'Неизвестные',
+      value: 'Информация о взаимодействии недоступна.',
+      color: 'gray'
     },
   ]
   const searchAutoComplite = (inputs) => {
     console.log(inputs)
     axios
-      .get(`https://pocketmedic.online/compare/drugs_search?drug=` + inputs)
+      .get(`${urlLocal}compare/drugs_search?drug=` + inputs)
       .then(response => {
-        const compares = response.data.mnn_1
+        const compares = response.data
         setAutoComplite(Object.values(compares))
       }).catch(error => console.log('autoComplite error', error))
   }
   return (
-
     <div className={classes.container}>
       <Container>
         <Box className={classes.content}>
           <Box className={classes.titleBox}>
-            <Typography variant="h5">"Светофорная" классификация лекарственных средств, повышающих риск падений</Typography>
+            <Typography variant="h5">Проверка взаимодействия лекарственных средств</Typography>
+            <Box className={classes.buttonBox}>
+              <ButtonCustom text="Вопрос ответ" onClick={() => { history.push("/faq") }} />
+            </Box>
           </Box>
           <Grid container className={classes.interactionBox}>
             <Grid item lg={6} sm={12} md={6} xl={6} xs={12} className={classes.activePart}>
-              {/* <Typography variant="body2">Международное непатентованное наименование (МНН)</Typography> */}
+              <Typography variant="body2">Международное непатентованное наименование (МНН)</Typography>
               <Box className={classes.activePart__inputBox}>
                 {inputs.map((item, index) => (
                   <Box className={classes.activePart__inputBox_item} key={index}>
@@ -303,13 +308,14 @@ const App = () => {
                       freeSolo
                       options={AutoCompliteList}
                       className={classes.activePart__input}
-
                       onInputChange={(event, newInputValue) => handleAutoComplite(item.id, newInputValue)}
                       renderInput={(params) => (
                         <TextField  {...params} id="outlined-basic" label="Введите лекарство" variant="outlined" value={item.value} onChange={handleText(item.id)} />
                       )}
                     />
-                    <Button variant="contained" className={classes.activePart__cancelButton} onClick={() => { handleDelete(item.id) }}>x</Button>
+                    {item.close == false ? <Box style={{ width: 80, height: 56 }}></Box> :
+                      <Button variant="contained" className={classes.activePart__cancelButton} onClick={() => { handleDelete(item.id) }}>x</Button>
+                    }
                   </Box>
                 ))}
               </Box>
@@ -320,20 +326,19 @@ const App = () => {
             </Grid>
             <Grid item lg={6} sm={12} md={6} xl={6} xs={12} className={classes.TextAreaBox}>
               <Box style={{ display: 'flex', flexDirection: 'row', marginBottom: 10 }}>
-                {/* <Typography variant="body2">Взаимодействие:</Typography> */}
+                <Typography variant="body2">Взаимодействие:</Typography>
               </Box>
               <Box className={classes.interactionsContent}>
                 {/* <Box>{effect !== 'нету эффектов' ? mnn1 + ' и ' + mnn2 + ' взаимодействуют: ' : ''} {effect !== 'нету эффектов' ? colorBox() : ''}{effect}</Box> */}
-
                 {effect ? effect.map((item, index) => (
                   <div key={index}>
-                    <span style={{ fontWeight: 'bold' }}>{item.drug_1}</span> и <span style={{ fontWeight: 'bold' }}>{item.drug_2}</span> взаимодействуют: <span style={{ backgroundColor: `${item.effect !== 'not effect' ? Object.values(item.color) : 'grey'}`, width: 15, height: 20, margin: 5, border: '1px solid black', color: `${item.effect !== 'not effect' ? Object.values(item.color) : 'grey'}` }}>az</span> {Object.values(item.effect)}
+                    <span style={{ fontWeight: 'bold' }}>{item.drug_1}</span> и <span style={{ fontWeight: 'bold' }}>{item.drug_2}</span> взаимодействуют: <span style={{ backgroundColor: `${item.effect !== 'not effect' ? item.color : 'grey'}`, width: 15, height: 20, margin: 5, border: '1px solid black', color: `${item.effect !== 'not effect' ? item.color : 'grey'}` }}>__</span> {Object.values(item.effect)}
                   </div>
                 )) : 'нету эффектов'}
               </Box>
               <Box className={classes.InfoBlock}>
-                {/* <Typography variant="body1">Классификация взаимодействия с лекарствами</Typography> */}
-                <Typography variant="body2">степень риска возникновения падения при применении лекарственного средства:</Typography>
+                <Typography variant="body1">Классификация взаимодействия с лекарствами</Typography>
+                <Typography variant="body2">Эти классификации являются лишь ориентировочными. Уместность взаимодействия конкретных лекарств сложно определить для конкретного человека. Всегда консультируйтесь со своим врачом перед началом или завершением приема каких-либо лекарств. </Typography>
                 <Box className={classes.InfoBlock_Content}>
                   {arrayInfoDrug.map((item, index) => (
                     <Box className={classes.InfoBlock_Item} key={index}>
@@ -346,14 +351,12 @@ const App = () => {
             </Grid>
           </Grid>
         </Box>
-
       </Container>
       <Box style={{ margin: '0 auto' }}>
         <SimpleModal showModal={showModal} setShowModal={setShowModal} />
       </Box>
     </div>
-
   );
 };
 
-export default App
+export default Interactions
