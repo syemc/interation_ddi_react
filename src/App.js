@@ -239,9 +239,8 @@ const Interactions = () => {
     inputs.map(({ value }) => {
       getParams = getParams + `test_case_1=${value}&`
     })
-    console.log(getParams)
     axios
-      .get(`${urlLocal}drugs_mnn?` + getParams)
+      .get(`${urlLocal}compare/drugs_mnn?` + getParams)
       .then(response => {
         const compares = response.data
         let status = compares.some((item) => {
@@ -281,7 +280,7 @@ const Interactions = () => {
   const searchAutoComplite = (inputs) => {
     console.log(inputs)
     axios
-      .get(`${urlLocal}drugs_search?drug=` + inputs)
+      .get(`${urlLocal}compare/drugs_search?drug=` + inputs)
       .then(response => {
         const compares = response.data
         setAutoComplite(Object.values(compares))
