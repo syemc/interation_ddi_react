@@ -292,9 +292,7 @@ const Interactions = () => {
         <Box className={classes.content}>
           <Box className={classes.titleBox}>
             <Typography variant="h5">Проверка взаимодействия лекарственных средств</Typography>
-            <Box className={classes.buttonBox}>
-              <ButtonCustom text="Вопрос ответ" onClick={() => { history.push("/faq") }} />
-            </Box>
+
           </Box>
           <Grid container className={classes.interactionBox}>
             <Grid item lg={6} sm={12} md={6} xl={6} xs={12} className={classes.activePart}>
