@@ -240,7 +240,7 @@ const Interactions = () => {
       getParams = getParams + `test_case_1=${value}&`
     })
     axios
-      .get(`${urlLocal}compare/drugs_mnn?` + getParams)
+      .get(`https://ddi.medic.fun/compare/drugs_mnn?` + getParams)
       .then(response => {
         const compares = response.data
         let status = compares.some((item) => {
@@ -280,7 +280,7 @@ const Interactions = () => {
   const searchAutoComplite = (inputs) => {
     console.log(inputs)
     axios
-      .get(`${urlLocal}compare/drugs_search?drug=` + inputs)
+      .get(`https://ddi.medic.fun/compare/drugs_search?drug=` + inputs)
       .then(response => {
         const compares = response.data
         setAutoComplite(Object.values(compares))
